@@ -1,40 +1,44 @@
+
 #include <iostream>
 #include <vector>
 #include <limits>
 #include <queue>
 #include <functional>
+#include <stack>
 #define INF numeric_limits<ll>::max() - 1
 using namespace std;
 typedef long long ll;
-typedef pair<int,ll> ill;
-typedef vector<ill> vp;
+typedef pair<ll,ll> pll;
+typedef pair<int,int> ii;
+typedef vector<pll> vp;
 struct Compare
 {
-	bool operator()(const ill A,const ill B)
+	bool operator()(const pll A,const pll B)
 	{
-		return A.second < B.second;
+		return A.first > B.first;
 	}
 };
-
 ll dijsktra(vector<vp > graph,int src,int target)
 {
-	priority_queue<ill,vector<ill>,greater<ill>> pq;
-	vector<long long> sfs(graph.size(),INF);
+	priority_queue<pll,vector<pll>,Compare> pq;
+	vector<ll> sfs(graph.size(),INF);
+	vector<bool> isCalculated(graph.size(),false);
 	sfs[src] = 0;
-	pq.push(ill(src,sfs[src]));
+	pq.push(pll(sfs[src],src));
 	while(!pq.empty())
 	{
-		ll src_node_id = pq.top().first;
-		ll src_sfs = pq.top().second;
+		int u = pq.top().second;
+		int d = pq.top().first;
+		isCalculated[u] = true;
 		pq.pop();
-		for(vector<ill >::iterator it = graph[src_node_id].begin(); it != graph[src_node_id].end(); ++it)
+		for(vector<pll>::iterator it = graph[u].begin(); it != graph[u].end(); ++it)
 		{
-			ll dest_node_id = it->first;
-			ll distance = it->second;
-			if(src_sfs + distance < sfs[dest_node_id])
+			int v = it->first;
+			int w = it->second;
+			if(!isCalculated[v] && w + d < sfs[v])
 			{
-				sfs[dest_node_id] = src_sfs + distance;
-				pq.push(ill(dest_node_id,sfs[dest_node_id]));
+				sfs[v] = w + d;
+				pq.push(pll(sfs[v],v));
 			}
 		}
 	}
@@ -53,8 +57,8 @@ int main()
 		{
 			ll a,b,w;
 			cin >> a >> b >> w;
-			graph[a].push_back(ill(b,w));
-			graph[b].push_back(ill(a,w));
+			graph[a].push_back(pll(b,w));
+			graph[b].push_back(pll(a,w));
 		}
 		ll ssp = dijsktra(graph,S,T);
 		cout << "Case #"<<i << ": ";
@@ -65,3 +69,4 @@ int main()
 	}
     return 0;
 }
+//using g++ main.cpp -o main -std=c++11
