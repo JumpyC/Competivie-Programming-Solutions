@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <limits>
+#include <queue>
+#include <functional>
+#include <stack>
+#include <cmath>
+#include <iomanip>
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+#define INF 10e12
+#define FOR(start,end,incre) for(int i = start; i < end; i += incre)
+using namespace std;
+typedef long long ll;
+typedef pair<ll,ll> ill;
+typedef vector<ill> vp;
+int main()
+{
+	ll ts,te,tu,myq = INF,mywt = INF;
+	cin >> ts >> te >> tu;
+	int n;
+	cin >> n;
+	vector<ll> q(n+1);
+	sort(q.begin(),q.end());
+	vector<ll> av(n+1);
+	FOR(0,n,1)
+	{
+		cin >> q[i];
+	}
+	av[0] = (q[0] < ts) ? ts + tu : q[0] + tu;
+	FOR(1,n,1)
+	{
+
+		if(q[i] < av[i-1])
+		{
+			av[i] = av[i-1] + tu;
+		}
+		else if(q[i] >= av[i-1])
+		{
+			av[i] = q[i] + tu;
+		}
+	}
+	FOR(0,n,1)
+	{
+		ll bef = INF,mid = INF,befwt = INF,midwt = INF;
+		if(q[i] > te - tu)
+			continue;
+		if(q[i] > 0)
+		{
+			bef = q[i] - 1;
+			befwt = (av[i] - tu) - bef;
+		}
+		if(av[i-1] < av[i] - tu)
+		{
+			bef = av[i-1];
+			befwt = 0;
+		}
+		mid = q[i];
+		midwt = av[i] - q[i];
+		if(midwt < befwt && midwt < mywt)
+		{
+			mywt = midwt;
+			myq = mid;
+		}
+		else if(befwt < midwt && befwt < mywt)
+		{
+			mywt = befwt;
+			myq = bef;
+		}
+	}
+	if(n-1 >= 0 && av[n-1] <= te - tu)
+	{
+		myq = av[n-1];
+		mywt = 0;
+	}
+	if(av[0] - tu >= te || n == 0)
+	{
+		myq = ts;
+		mywt = 0;
+	}
+	//cout << n << endl;
+	//cout << myq << " " << mywt <<  endl;
+	cout << myq << endl;
+}
